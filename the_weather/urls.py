@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Including all urls from app named 'weather'
     path('', include('weather.urls')),
 ]
