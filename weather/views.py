@@ -1,6 +1,7 @@
 import requests
 # To render templates
 from django.shortcuts import render
+from .models import City
 
 # Create your views here.
 def index(request):
@@ -9,17 +10,24 @@ def index(request):
     #Static city input
     city = 'Mumbai'
 
-    # city name is pased to API request
-    r = requests.get(url.format(city)).json()
+    cities = City.objects.all()
 
-    city_weather = {
-        'city' : city,
-        'temperature' : r['main']['temp'],
-        'description' : r['weather'][0]['description'],
-        'icon' : r['weather'][0]['icon'],
-    }
+    weather_data = []
+
+    for city in cities:
+        # city name is pased to API request
+        r = requests.get(url.format(city)).json()
+
+        city_weather = {
+            'city' : city.name,
+            'temperature' : r['main']['temp'],
+            'description' : r['weather'][0]['description'],
+            'icon' : r['weather'][0]['icon'],
+        }
+
+        weather_data.append(city_weather)
 
     # Data to be passed to template
-    context = {'city_weather' : city_weather}
+    context = {'weather_data' : weather_data}
 
     return render(request, 'weather/weather.html', context)
