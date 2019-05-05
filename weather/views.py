@@ -2,13 +2,25 @@ import requests
 # To render templates
 from django.shortcuts import render
 from .models import City
+#Use or city form
+from .forms import CityForm
 
 # Create your views here.
 def index(request):
     #Weather API from "https://openweathermap.org/current" and appid is got after signing up on the website
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=5d9ed462326230269a392c17e455c0ed'
     #Static city input
-    city = 'Mumbai'
+    #city = 'Mumbai'
+
+    # Case 1 : When user is submitting a city name - we save the city name
+    if request.method == 'POST':
+        form = CityForm(request.POST)
+        form.save()
+        # pass
+        # print(request.POST)
+
+    # Case 2 : When user is not submitting a city name - The form is made blank again
+    form = CityForm()
 
     cities = City.objects.all()
 
@@ -28,6 +40,6 @@ def index(request):
         weather_data.append(city_weather)
 
     # Data to be passed to template
-    context = {'weather_data' : weather_data}
+    context = {'weather_data' : weather_data, 'form' : form}
 
     return render(request, 'weather/weather.html', context)
