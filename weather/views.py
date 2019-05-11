@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from .models import City
 #Use or city form
 from .forms import CityForm
+#For displayig messages
+from django.contrib import messages
 
 # Create your views here.
 def index(request):
@@ -14,8 +16,21 @@ def index(request):
 
     # Case 1 : When user is submitting a city name - we save the city name
     if request.method == 'POST':
-        form = CityForm(request.POST)
-        form.save()
+        thiscity = requests.get(url.format(request.POST['name'])).json()
+        checkcity = City.objects.filter(name__iexact = request.POST['name'])
+        # print("This city - {} is already present in database".format(checkcity))
+        # print(thiscity)
+        
+        # Checking if city name entered really exists and also if it already exists in database or not
+        if(thiscity['cod'] != '404' and not checkcity.exists()):
+            form = CityForm(request.POST)
+            form.save()
+        elif(thiscity['cod'] == '404'):
+            messages.error(request, 'There is no such city named - "{}"'.format(request.POST['name']))
+        elif(checkcity.exists):
+            messages.success(request, 'You have already added this city')
+            # print("City not found darling")
+        # print(thiscity)
         # pass
         # print(request.POST)
 
