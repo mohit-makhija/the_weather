@@ -1,6 +1,6 @@
 import requests
-# To render templates
-from django.shortcuts import render
+# render to render templates, redirect for redirecting to a url
+from django.shortcuts import render, redirect
 from .models import City
 #Use or city form
 from .forms import CityForm
@@ -43,3 +43,11 @@ def index(request):
     context = {'weather_data' : weather_data, 'form' : form}
 
     return render(request, 'weather/weather.html', context)
+
+def deleteCity(request,cityname):
+    city_to_delete = City.objects.filter(name__iexact=cityname)
+    # print(city_to_delete)
+    for city in city_to_delete:
+        city.delete()
+    return redirect('index')
+    #return render(request, 'weather/weather.html')

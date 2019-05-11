@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/d/pulledrepos/pulledrepos_env/Scripts/python",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}
